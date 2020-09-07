@@ -19,7 +19,7 @@ import id.kampung.expandablelistviewsearch.model.ChildModel
 class ExpandableAdapter(private val context: Context, private val titleList: MutableList<TitleModel>) :
     BaseExpandableListAdapter(), Filterable {
 
-    var itemsCopy: List<TitleModel> = titleList
+    var itemsCopy: MutableList<TitleModel> = titleList
     var expanAll = false
     override fun getGroup(groupPosition: Int): Any {
         return itemsCopy[groupPosition].name
@@ -36,23 +36,19 @@ class ExpandableAdapter(private val context: Context, private val titleList: Mut
     @SuppressLint("InflateParams")
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
         var convertView = convertView
-        val title = titleList[groupPosition].name
-        val mExpandableListView = parent as ExpandableListView
-        Log.d("isian", "${titleList[groupPosition].name}  $groupPosition")
-        if (expanAll) {
-            mExpandableListView.expandGroup(groupPosition)
-        } else {
-            mExpandableListView.collapseGroup(groupPosition)
-        }
-
         if (convertView == null) {
+
+            convertView
+
+            val title = getGroup(groupPosition) as String
             val layoutInflater = this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = layoutInflater.inflate(R.layout.header_layout, null)
+            val listTitle = convertView!!.findViewById<TextView>(R.id.listTitle)
+            listTitle.setTypeface(null, Typeface.BOLD)
+            listTitle.text = title
         }
 
-        val listTitle = convertView!!.findViewById<TextView>(R.id.listTitle)
-        listTitle.setTypeface(null, Typeface.BOLD)
-        listTitle.text = title
+
         return convertView
     }
 
@@ -132,7 +128,7 @@ class ExpandableAdapter(private val context: Context, private val titleList: Mut
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
-                itemsCopy = filterResults.values as List<TitleModel>
+                itemsCopy = filterResults.values as MutableList<TitleModel>
                 notifyDataSetChanged()
             }
         }
